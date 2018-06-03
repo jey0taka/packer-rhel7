@@ -78,7 +78,9 @@ Packerを利用する事で、上記の一連の流れを自動化できます�
 - shared-aws-account
 	- AMI作成後に共有するAWSアカウント
 
+
 ##　実行
+
 - バリデーションチェック
 	- `$ packer validate setup.json`
 - 実行
