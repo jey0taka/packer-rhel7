@@ -1,0 +1,63 @@
+{
+    "variables": {
+        "name": "rhel_no_ami_dayo",
+        "region": "ap-northeast-1",
+        "ami-id": "ami-XXXXXXXX",
+        "sg-id": "sg-XXXXXXX",
+        "vpc-id":"vpc-XXXXXXX",
+        "subnet-id":"subnet-XXXXXXXX",
+        "cloud-init_cfg": "jp.cfg",
+        "shared-aws-account": "123456789"
+    },
+    "builders":
+    [
+        {
+            "ami_users": "{{user `shared-aws-account`}}",
+            "type": "amazon-ebs",
+            "ami_name": "{{user `name`}}-{{isotime \"20060102-0304\"}}",
+            "region": "{{user `region`}}",
+            "source_ami": "ami-6b0d5f0d",
+            "instance_type": "t2.small",
+            "ssh_username": "ec2-user",
+            "security_group_ids": "{{user `sg-id`}}",
+            "vpc_id": "{{user `vpc-id`}}",
+            "subnet_id": "{{user `subnet-id`}}",
+            "associate_public_ip_address": true,
+            "ssh_timeout": "5m",
+            "tags": {
+              "Name": "{{user `name`}}"
+            },
+            "launch_block_device_mappings": [
+                {
+                    "volume_type": "gp2",
+                    "device_name": "/dev/sda1",
+                    "volume_size": 20,
+                    "delete_on_termination": "true"
+                }
+            ],
+            "ami_block_device_mappings": [
+                {
+                    "volume_type": "gp2",
+                    "device_name": "/dev/sdb",
+                    "volume_size": 20,
+                    "delete_on_termination": "true"
+                }
+            ]
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "./cloud-init_cfg/{{user `cloud-init_cfg`}}",
+            "destination": "/tmp/00_local.cfg" 
+        },
+        {
+            "type": "shell",
+            "inline": [
+            "sudo mv /tmp/00_local.cfg /etc/cloud/cloud.cfg.d/00_local.cfg",
+            "sudo chmod 0644 /etc/cloud/cloud.cfg.d/00_local.cfg",
+            "sudo chown -R root:root /etc/cloud/cloud.cfg.d/00_local.cfg"
+        ]
+      }
+    ]
+}
