@@ -7,7 +7,8 @@
         "vpc-id":"vpc-XXXXXXX",
         "subnet-id":"subnet-XXXXXXXX",
         "cloud-init_cfg": "jp.cfg",
-        "shared-aws-account": "123456789"
+        "shared-aws-account": "123456789",
+        "ssm-agent-url": "https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm"
     },
     "builders":
     [
@@ -56,7 +57,10 @@
             "inline": [
             "sudo mv /tmp/00_local.cfg /etc/cloud/cloud.cfg.d/00_local.cfg",
             "sudo chmod 0644 /etc/cloud/cloud.cfg.d/00_local.cfg",
-            "sudo chown -R root:root /etc/cloud/cloud.cfg.d/00_local.cfg"
+            "sudo chown -R root:root /etc/cloud/cloud.cfg.d/00_local.cfg",
+            "sudo yum install -y {{user `ssm-agent-url`}}",
+            "sudo systemctl start amazon-ssm-agent",
+            "sudo systemctl enable amazon-ssm-agent.service"
         ]
       }
     ]
