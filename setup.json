@@ -17,7 +17,7 @@
             "type": "amazon-ebs",
             "ami_name": "{{user `name`}}-{{isotime \"20060102-0304\"}}",
             "region": "{{user `region`}}",
-            "source_ami": "ami-6b0d5f0d",
+            "source_ami": "{{user `ami-id`}}",
             "instance_type": "t2.small",
             "ssh_username": "ec2-user",
             "security_group_ids": "{{user `sg-id`}}",
